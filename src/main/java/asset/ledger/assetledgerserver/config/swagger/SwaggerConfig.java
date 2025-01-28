@@ -23,8 +23,8 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi api() {
         return GroupedOpenApi.builder()
-                .group("Ledger API")
-                .pathsToMatch("/ledger/**")
+                .group("Asset Ledger API")
+                .pathsToMatch("/**")
                 .build();
     }
 

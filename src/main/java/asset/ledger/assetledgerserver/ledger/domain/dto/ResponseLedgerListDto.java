@@ -15,4 +15,5 @@ public class ResponseLedgerListDto {
     public void addResponseLedgerDto(ResponseLedgerDto responseLedgerDto) {
         this.ledgerDtos.add(responseLedgerDto);
     }
+
 }

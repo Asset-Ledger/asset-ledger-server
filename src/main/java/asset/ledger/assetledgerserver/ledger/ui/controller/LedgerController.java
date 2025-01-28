@@ -24,10 +24,8 @@ public class LedgerController {
     private final LedgerService ledgerService;
 
     /**
-     * 요청 결과 상세 조회.
-     *
      * @param userId    유저 id
-     * @param searchYearMonth   2025/01/24 (금)
+     * @param searchYearMonth   2025년 1월
      * @param startDate 급여 날짜를 선택하지 않으면 기본 1, 선택하면 급여일
      * @param plusMinusType
      * @param useCategory
@@ -77,6 +75,19 @@ public class LedgerController {
         }
     }
 
+    /**
+     * @param userId    유저 id
+     * @param requestLedgerDto "plusMinusType": "PLUS",
+     *                         "editDate": "2025/01/24 (금)",
+     *                         "editTime": "오후 4:40",
+     *                         "useCategory": "교통비",
+     *                         "assetType": "계좌",
+     *                         "assetTypeDetail": "하나은행(급여통장)",
+     *                         "description": "교통비",
+     *                         "amount": 10000
+     * @return 가계부 조회 결과
+     *
+     */
     @Operation(
             summary = "가계부 작성",
             description = "가계부를 작성합니다."
