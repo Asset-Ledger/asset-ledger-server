@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public class RequestAssetDetailDto {
     private String assetType;
-    private String assetDetailName;
+    private String assetDetailType;
     private String connectedAccount; // 카드일 경우 연결된 계좌 설정
     private int totalAmount;
 
@@ -15,7 +15,7 @@ public class RequestAssetDetailDto {
                 .builder()
                 .userId(userId)
                 .assetType(this.assetType)
-                .assetDetailName(this.assetDetailName)
+                .assetDetailType(this.assetDetailType)
                 .connectedAccount(this.connectedAccount)
                 .totalAmount(this.totalAmount)
                 .build();

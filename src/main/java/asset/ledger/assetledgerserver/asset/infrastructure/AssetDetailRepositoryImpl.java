@@ -26,6 +26,31 @@ public class AssetDetailRepositoryImpl implements AssetDetailRepositoryCustom {
                 )
                 .fetch();
     }
+
+    @Override
+    public Boolean existAssetDetail(final String userId, final String assetType, final String assetDetailType) {
+        return (jpqlQueryFactory
+                .selectFrom(assetDetail)
+                .where(
+                        isNotDeleted(),
+                        assetDetail.userId.eq(userId),
+                        assetDetail.assetType.eq(assetType),
+                        assetDetail.assetDetailType.eq(assetDetailType)
+                ).fetchCount() == 1);
+    }
+
+    @Override
+    public AssetDetail getAssetDetail(final String userId, final String assetType, final String assetDetailType) {
+        return jpqlQueryFactory
+                .selectFrom(assetDetail)
+                .where(
+                        isNotDeleted(),
+                        assetDetail.userId.eq(userId),
+                        assetDetail.assetType.eq(assetType),
+                        assetDetail.assetDetailType.eq(assetDetailType)
+                ).fetchOne();
+    }
+
     private BooleanExpression isNotDeleted() {
         return assetDetail.isDeleted.eq(Boolean.FALSE);
     }

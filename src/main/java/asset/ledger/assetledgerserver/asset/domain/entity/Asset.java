@@ -27,4 +27,11 @@ public class Asset extends BaseEntity {
     private String assetType;
     private int totalAmount;
 
+    public void updateAmount(final String plusMinusType, final int amount) {
+        if (plusMinusType.equals("PLUS") || plusMinusType.equals("plus")) {
+            this.totalAmount += amount;
+        } else if (plusMinusType.equals("MINUS") || plusMinusType.equals("minus")) {
+            this.totalAmount -= amount;
+        }
+    }
 }

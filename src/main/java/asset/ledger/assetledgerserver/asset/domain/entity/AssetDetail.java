@@ -25,8 +25,16 @@ public class AssetDetail extends BaseEntity {
     private String userId;
     private String assetType;
     @Column(unique = true)
-    private String assetDetailName;
+    private String assetDetailType;
     private String connectedAccount; // 카드일 경우 연결된 계좌 설정
     private int totalAmount;
+
+    public void updateAmount(final String plusMinusType, final int amount) {
+        if (plusMinusType.equals("PLUS") || plusMinusType.equals("plus")) {
+            this.totalAmount += amount;
+        } else if (plusMinusType.equals("MINUS") || plusMinusType.equals("minus")) {
+            this.totalAmount -= amount;
+        }
+    }
 
 }

@@ -5,7 +5,7 @@ import asset.ledger.assetledgerserver.ledger.domain.dto.ResponseLedgerListDto;
 import asset.ledger.assetledgerserver.ledger.ui.dto.SearchLedgerDto;
 
 public interface LedgerService {
-    ResponseLedgerListDto searchLedgerByUserIdAndCondition(SearchLedgerDto requestLedgerDto);
-    void createLedger(String userId, RequestLedgerDto requestLedgerDto);
+    ResponseLedgerListDto searchLedgerByUserIdAndCondition(final SearchLedgerDto requestLedgerDto);
+    void createLedger(final String userId, final RequestLedgerDto requestLedgerDto);
 
-}
+;}

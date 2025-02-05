@@ -61,6 +61,13 @@ public class LedgerController {
             ResponseLedgerListDto responseLedgerListDto
                     = ledgerService.searchLedgerByUserIdAndCondition(searchLedgerDto);
 
+            System.out.println(userId);
+            System.out.println(searchYearMonth);
+            System.out.println(startDate);
+            System.out.println(plusMinusType);
+            System.out.println(useCategory);
+            System.out.println(assetType);
+            System.out.println(assetTypeDetail);
             return new ResponseEntity<>(responseLedgerListDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());

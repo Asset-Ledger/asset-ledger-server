@@ -39,7 +39,7 @@ public class AssetDetailController {
     ) {
         try {
             ResponseAssetDetailListDto responseAssetDetailListDto
-                    = assetDetailService.getAssetDetail(userId, assetType);
+                    = assetDetailService.getAssetDetails(userId, assetType);
 
             return new ResponseEntity<>(responseAssetDetailListDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {

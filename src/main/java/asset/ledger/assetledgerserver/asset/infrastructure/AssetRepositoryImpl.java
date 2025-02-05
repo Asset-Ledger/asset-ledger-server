@@ -16,7 +16,7 @@ public class AssetRepositoryImpl implements AssetRepositoryCustom {
     private final JPQLQueryFactory jpqlQueryFactory;
 
     @Override
-    public List<Asset> getAsset(final String userId) {
+    public List<Asset> getAssets(final String userId) {
         return jpqlQueryFactory
                 .selectFrom(asset)
                 .where(
@@ -24,6 +24,30 @@ public class AssetRepositoryImpl implements AssetRepositoryCustom {
                         asset.userId.eq(userId)
                 )
                 .fetch();
+    }
+
+    @Override
+    public Boolean existAsset(final String userId, final String assetType) {
+        return (jpqlQueryFactory
+                .selectFrom(asset)
+                .where(
+                        isNotDeleted(),
+                        asset.userId.eq(userId),
+                        asset.assetType.eq(assetType)
+                )
+                .fetchCount() == 1);
+    }
+
+    @Override
+    public Asset getAsset(final String userId, final String assetType) {
+        return jpqlQueryFactory
+                .selectFrom(asset)
+                .where(
+                        isNotDeleted(),
+                        asset.userId.eq(userId),
+                        asset.assetType.eq(assetType)
+                )
+                .fetchOne();
     }
 
     private BooleanExpression isNotDeleted() {
