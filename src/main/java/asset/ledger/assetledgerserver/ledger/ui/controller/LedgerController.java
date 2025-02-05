@@ -5,11 +5,15 @@ import asset.ledger.assetledgerserver.ledger.domain.dto.RequestLedgerDto;
 import asset.ledger.assetledgerserver.ledger.domain.dto.ResponseLedgerListDto;
 import asset.ledger.assetledgerserver.ledger.ui.dto.SearchLedgerDto;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,13 +65,6 @@ public class LedgerController {
             ResponseLedgerListDto responseLedgerListDto
                     = ledgerService.searchLedgerByUserIdAndCondition(searchLedgerDto);
 
-            System.out.println(userId);
-            System.out.println(searchYearMonth);
-            System.out.println(startDate);
-            System.out.println(plusMinusType);
-            System.out.println(useCategory);
-            System.out.println(assetType);
-            System.out.println(assetTypeDetail);
             return new ResponseEntity<>(responseLedgerListDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
@@ -92,7 +89,7 @@ public class LedgerController {
      *                         "assetTypeDetail": "하나은행(급여통장)",
      *                         "description": "교통비",
      *                         "amount": 10000
-     * @return 가계부 조회 결과
+     * @return void
      *
      */
     @Operation(
@@ -120,4 +117,76 @@ public class LedgerController {
         }
     }
 
+    /**
+     * @param id    가계부 id
+     * @param requestLedgerDto "plusMinusType": "PLUS",
+     *                         "editDate": "2025/01/24 (금)",
+     *                         "editTime": "오후 4:40",
+     *                         "useCategory": "교통비",
+     *                         "assetType": "계좌",
+     *                         "assetTypeDetail": "하나은행(급여통장)",
+     *                         "description": "교통비",
+     *                         "amount": 10000
+     * @return void
+     *
+     */
+    @Operation(
+            summary = "가계부 수정",
+            description = "가계부를 수정합니다."
+    )
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateLedger(
+            @PathVariable("id") Long id,
+            @RequestBody RequestLedgerDto requestLedgerDto
+    ) {
+
+        try {
+            ledgerService.updateLedger(id, requestLedgerDto);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            System.out.println(e.getMessage());
+
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            System.out.println("알 수 없는 오류가 발생했습니다");
+
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * @param id    가계부 id
+     * @return void
+     *
+     */
+    @Operation(
+            summary = "가계부 삭제",
+            description = "가계부를 삭제합니다."
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteLedger(@PathVariable("id") Long id) {
+
+        try {
+            ledgerService.deleteLedger(id);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            System.out.println(e.getMessage());
+
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            System.out.println("알 수 없는 오류가 발생했습니다");
+
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

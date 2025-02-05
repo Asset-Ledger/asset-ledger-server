@@ -8,6 +8,7 @@ import asset.ledger.assetledgerserver.ledger.domain.dto.RequestLedgerDto;
 import asset.ledger.assetledgerserver.ledger.domain.dto.ResponseLedgerDto;
 import asset.ledger.assetledgerserver.ledger.domain.dto.ResponseLedgerListDto;
 import asset.ledger.assetledgerserver.ledger.domain.entity.Ledger;
+import asset.ledger.assetledgerserver.ledger.domain.enums.PlusMinusType;
 import asset.ledger.assetledgerserver.ledger.domain.repository.LedgerRepository;
 import asset.ledger.assetledgerserver.ledger.infrastructure.utils.LocalDataTimeUtils;
 import asset.ledger.assetledgerserver.ledger.ui.dto.SearchLedgerDto;
@@ -63,11 +64,42 @@ public class LedgerServiceImpl implements LedgerService {
         Ledger ledger = requestLedgerDto.toEntity(userId);
         ledgerRepository.save(ledger);
 
-        asset.updateAmount(requestLedgerDto.getPlusMinusType(), requestLedgerDto.getAmount());
+        asset.calculateAmount(requestLedgerDto.getPlusMinusType(), requestLedgerDto.getAmount());
 
         if (assetDetail != null) {
-            assetDetail.updateAmount(requestLedgerDto.getPlusMinusType(), requestLedgerDto.getAmount());
+            assetDetail.calculateAmount(requestLedgerDto.getPlusMinusType(), requestLedgerDto.getAmount());
         }
+    }
+
+    @Override
+    public void updateLedger(final Long id, final RequestLedgerDto requestLedgerDto) {
+        Ledger ledger = ledgerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 Ledger 입니다."));
+
+        Ledger updateLedger = requestLedgerDto.toEntity(ledger.getUserId());
+        ledger.update(updateLedger);
+
+        ledgerRepository.save(ledger);
+    }
+
+    @Override
+    public void deleteLedger(final Long id) {
+        // soft delete
+        Ledger ledger = ledgerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 Ledger 입니다."));
+
+        Asset asset = assetService.getAsset(ledger.getUserId(), ledger.getAssetType());
+        asset.rollbackAmount(ledger.getPlusMinusType().getType(), ledger.getAmount());
+
+        if (ledger.getAssetType().equals("계좌") || ledger.getAssetType().equals("카드")) {
+            AssetDetail assetDetail = assetDetailService.getAssetDetail(
+                    ledger.getUserId(),
+                    ledger.getAssetType(),
+                    ledger.getAssetTypeDetail()
+            );
+            assetDetail.rollbackAmount(ledger.getPlusMinusType().getType(), ledger.getAmount());
+        }
+
+        ledger.delete();
+        ledgerRepository.save(ledger);
     }
 
 }

@@ -29,11 +29,20 @@ public class AssetDetail extends BaseEntity {
     private String connectedAccount; // 카드일 경우 연결된 계좌 설정
     private int totalAmount;
 
-    public void updateAmount(final String plusMinusType, final int amount) {
+    public void calculateAmount(final String plusMinusType, final int amount) {
         if (plusMinusType.equals("PLUS") || plusMinusType.equals("plus")) {
             this.totalAmount += amount;
         } else if (plusMinusType.equals("MINUS") || plusMinusType.equals("minus")) {
             this.totalAmount -= amount;
+        }
+    }
+
+    public void rollbackAmount(final String plusMinusType, final int amount) {
+        // ledger를 삭제하는 경우 더했던 값은 빼주고, 뺐던 값은 더해준다.
+        if (plusMinusType.equals("PLUS") || plusMinusType.equals("plus")) {
+            this.totalAmount -= amount;
+        } else if (plusMinusType.equals("MINUS") || plusMinusType.equals("minus")) {
+            this.totalAmount += amount;
         }
     }
 
