@@ -2,6 +2,7 @@ package asset.ledger.assetledgerserver.ledger.ui.controller;
 
 import asset.ledger.assetledgerserver.ledger.application.service.LedgerService;
 import asset.ledger.assetledgerserver.ledger.domain.dto.RequestLedgerDto;
+import asset.ledger.assetledgerserver.ledger.domain.dto.RequestTransferLedgerDto;
 import asset.ledger.assetledgerserver.ledger.domain.dto.ResponseLedgerListDto;
 import asset.ledger.assetledgerserver.ledger.ui.dto.SearchLedgerDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -97,13 +98,49 @@ public class LedgerController {
             description = "가계부를 작성합니다."
     )
     @PostMapping("")
-    public ResponseEntity<Void> createLedger(
+    public ResponseEntity<Void> createPlusMinusLedger(
             @RequestHeader("user-id") String userId,
             @RequestBody RequestLedgerDto requestLedgerDto
     ) {
 
         try {
-            ledgerService.createLedger(userId, requestLedgerDto);
+            ledgerService.createPlusMinusLedger(userId, requestLedgerDto);
+
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            System.out.println("알 수 없는 오류가 발생했습니다");
+
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * @param userId    유저 id
+     * @param requestTransferLedgerDto requestOutLedgerDto
+     *                                 requestInLedgerDto
+     * @return void
+     *
+     */
+    @Operation(
+            summary = "계좌간 이체 가계부 작성",
+            description = "계좌간 이체 가계부를 작성합니다."
+    )
+    @PostMapping("/transfer")
+    public ResponseEntity<Void> createTransferLedgers(
+            @RequestHeader("user-id") String userId,
+            @RequestBody RequestTransferLedgerDto requestTransferLedgerDto
+    ) {
+
+        try {
+            ledgerService.createTransferLedgers(
+                    userId,
+                    requestTransferLedgerDto.getRequestOutLedgerDto(),
+                    requestTransferLedgerDto.getRequestInLedgerDto()
+            );
 
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {

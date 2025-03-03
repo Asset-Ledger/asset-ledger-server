@@ -27,6 +27,10 @@ public class Asset extends BaseEntity {
     private String assetType;
     private int totalAmount;
 
+    public void addAssetDetailTypeAmount(final int assetDetailAmount) {
+        this.totalAmount += assetDetailAmount;
+    }
+
     public void calculateAmount(final String plusMinusType, final int amount) {
         if (plusMinusType.equals("PLUS") || plusMinusType.equals("plus")) {
             this.totalAmount += amount;

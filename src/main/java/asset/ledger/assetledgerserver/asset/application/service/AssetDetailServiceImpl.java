@@ -6,16 +6,19 @@ import asset.ledger.assetledgerserver.asset.domain.dto.ResponseAssetDetailListDt
 import asset.ledger.assetledgerserver.asset.domain.entity.Asset;
 import asset.ledger.assetledgerserver.asset.domain.entity.AssetDetail;
 import asset.ledger.assetledgerserver.asset.domain.repository.AssetDetailRepository;
+import asset.ledger.assetledgerserver.asset.domain.repository.AssetRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class AssetDetailServiceImpl implements AssetDetailService {
 
     private final AssetDetailRepository assetDetailRepository;
+    private final AssetRepository assetRepository;
     private final AssetService assetService;
 
     @Override
@@ -31,11 +34,15 @@ public class AssetDetailServiceImpl implements AssetDetailService {
         return responseAssetDetailListDto;
     }
 
+    @Transactional
     @Override
     public void createAssetDetail(final String userId, final RequestAssetDetailDto requestAssetDetailDto) {
         assetService.existAsset(userId, requestAssetDetailDto.getAssetType());
 
+        Asset asset = assetService.getAsset(userId, requestAssetDetailDto.getAssetType());
         AssetDetail assetDetail = requestAssetDetailDto.toEntity(userId);
+
+        asset.addAssetDetailTypeAmount(requestAssetDetailDto.getTotalAmount());
 
         assetDetailRepository.save(assetDetail);
     }

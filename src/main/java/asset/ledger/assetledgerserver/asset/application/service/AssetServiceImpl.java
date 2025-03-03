@@ -61,7 +61,7 @@ public class AssetServiceImpl implements AssetService {
     ) {
         Asset asset = getAsset(userId, assetType);
 
-        asset.updateAmount(plusMinusType, amount);
+        asset.calculateAmount(plusMinusType, amount);
 
         assetRepository.save(asset);
     }

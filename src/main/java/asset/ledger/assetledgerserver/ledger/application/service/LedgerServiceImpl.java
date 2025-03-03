@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -48,8 +49,9 @@ public class LedgerServiceImpl implements LedgerService {
         return responseLedgerListDto;
     }
 
+    @Transactional
     @Override
-    public void createLedger(final String userId, final RequestLedgerDto requestLedgerDto) {
+    public void createPlusMinusLedger(final String userId, final RequestLedgerDto requestLedgerDto) {
         Asset asset = assetService.getAsset(userId, requestLedgerDto.getAssetType());
         AssetDetail assetDetail = null;
 
@@ -69,6 +71,31 @@ public class LedgerServiceImpl implements LedgerService {
         if (assetDetail != null) {
             assetDetail.calculateAmount(requestLedgerDto.getPlusMinusType(), requestLedgerDto.getAmount());
         }
+    }
+
+    @Transactional
+    @Override
+    public void createTransferLedgers(
+            final String userId,
+            final RequestLedgerDto requestOutLedgerDto,
+            final RequestLedgerDto requestInLedgerDto) {
+        Asset asset = assetService.getAsset(userId, requestOutLedgerDto.getAssetType());
+        createTransferLedger(userId, asset, requestOutLedgerDto);
+        createTransferLedger(userId, asset, requestInLedgerDto);
+    }
+
+    private void createTransferLedger(final String userId, final Asset asset, final RequestLedgerDto requestLedgerDto) {
+        AssetDetail assetDetail = assetDetailService.getAssetDetail(
+                userId,
+                requestLedgerDto.getAssetType(),
+                requestLedgerDto.getAssetTypeDetail()
+        );
+
+        Ledger ledger = requestLedgerDto.toEntity(userId);
+        ledgerRepository.save(ledger);
+
+        asset.calculateAmount(requestLedgerDto.getPlusMinusType(), requestLedgerDto.getAmount());
+        assetDetail.calculateAmount(requestLedgerDto.getPlusMinusType(), requestLedgerDto.getAmount());
     }
 
     @Override
