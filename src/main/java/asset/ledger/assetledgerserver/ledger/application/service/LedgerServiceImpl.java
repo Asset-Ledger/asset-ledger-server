@@ -8,8 +8,10 @@ import asset.ledger.assetledgerserver.ledger.domain.dto.RequestLedgerDto;
 import asset.ledger.assetledgerserver.ledger.domain.dto.ResponseLedgerDto;
 import asset.ledger.assetledgerserver.ledger.domain.dto.ResponseLedgerListDto;
 import asset.ledger.assetledgerserver.ledger.domain.entity.Ledger;
+import asset.ledger.assetledgerserver.ledger.domain.entity.TransferLedgers;
 import asset.ledger.assetledgerserver.ledger.domain.enums.PlusMinusType;
 import asset.ledger.assetledgerserver.ledger.domain.repository.LedgerRepository;
+import asset.ledger.assetledgerserver.ledger.domain.repository.TransferLedgersRepository;
 import asset.ledger.assetledgerserver.ledger.infrastructure.utils.LocalDataTimeUtils;
 import asset.ledger.assetledgerserver.ledger.ui.dto.SearchLedgerDto;
 import jakarta.persistence.EntityNotFoundException;
@@ -26,6 +28,7 @@ public class LedgerServiceImpl implements LedgerService {
     private final LedgerRepository ledgerRepository;
     private final AssetService assetService;
     private final AssetDetailService assetDetailService;
+    private final TransferLedgersRepository transferLedgersRepository;
 
     @Override
     public ResponseLedgerListDto searchLedgerByUserIdAndCondition(final SearchLedgerDto searchLedgerDto) {
@@ -80,11 +83,19 @@ public class LedgerServiceImpl implements LedgerService {
             final RequestLedgerDto requestOutLedgerDto,
             final RequestLedgerDto requestInLedgerDto) {
         Asset asset = assetService.getAsset(userId, requestOutLedgerDto.getAssetType());
-        createTransferLedger(userId, asset, requestOutLedgerDto);
-        createTransferLedger(userId, asset, requestInLedgerDto);
+        Long outLedgerId = createTransferLedger(userId, asset, requestOutLedgerDto);
+        Long inLedgerId = createTransferLedger(userId, asset, requestInLedgerDto);
+
+        TransferLedgers transferLedgers = TransferLedgers
+                .builder()
+                .outLedgerId(outLedgerId)
+                .inLedgerId(inLedgerId)
+                .build();
+
+        transferLedgersRepository.save(transferLedgers);
     }
 
-    private void createTransferLedger(final String userId, final Asset asset, final RequestLedgerDto requestLedgerDto) {
+    private Long createTransferLedger(final String userId, final Asset asset, final RequestLedgerDto requestLedgerDto) {
         AssetDetail assetDetail = assetDetailService.getAssetDetail(
                 userId,
                 requestLedgerDto.getAssetType(),
@@ -92,10 +103,12 @@ public class LedgerServiceImpl implements LedgerService {
         );
 
         Ledger ledger = requestLedgerDto.toEntity(userId);
-        ledgerRepository.save(ledger);
+        Ledger savedLedger = ledgerRepository.save(ledger);
 
         asset.calculateAmount(requestLedgerDto.getPlusMinusType(), requestLedgerDto.getAmount());
         assetDetail.calculateAmount(requestLedgerDto.getPlusMinusType(), requestLedgerDto.getAmount());
+
+        return savedLedger.getId();
     }
 
     @Override
@@ -113,6 +126,15 @@ public class LedgerServiceImpl implements LedgerService {
         // soft delete
         Ledger ledger = ledgerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 Ledger 입니다."));
 
+        if (!ledger.getUseCategory().equals("입금 이체") && !ledger.getUseCategory().equals("출금 이체")) {
+            deletePlusMinusLedger(ledger);
+        }
+        else {
+            deleteTransferLedgers(ledger);
+        }
+    }
+
+    private void deletePlusMinusLedger(final Ledger ledger) {
         Asset asset = assetService.getAsset(ledger.getUserId(), ledger.getAssetType());
         asset.rollbackAmount(ledger.getPlusMinusType().getType(), ledger.getAmount());
 
@@ -127,6 +149,29 @@ public class LedgerServiceImpl implements LedgerService {
 
         ledger.delete();
         ledgerRepository.save(ledger);
+    }
+
+    private void deleteTransferLedgers(final Ledger ledger) {
+        TransferLedgers transferLedgers = transferLedgersRepository.getAssociatedLedgerId(ledger.getId());
+        Long outLedgerId = transferLedgers.getOutLedgerId();
+        Long inLedgerId = transferLedgers.getInLedgerId();
+
+        Ledger outLedger = null;
+        Ledger inLedger = null;
+
+        if (ledger.getId().equals(outLedgerId)) {
+            outLedger = ledger;
+            inLedger = ledgerRepository.findById(inLedgerId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 Ledger 입니다."));
+        }
+        else {
+            inLedger = ledger;
+            outLedger = ledgerRepository.findById(inLedgerId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 Ledger 입니다."));
+        }
+
+        deletePlusMinusLedger(outLedger);
+        deletePlusMinusLedger(inLedger);
+        transferLedgers.delete();
+        transferLedgersRepository.save(transferLedgers);
     }
 
 }

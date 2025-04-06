@@ -1,8 +1,5 @@
 package asset.ledger.assetledgerserver.category.application.service;
 
-import asset.ledger.assetledgerserver.asset.domain.dto.ResponseAssetDto;
-import asset.ledger.assetledgerserver.asset.domain.dto.ResponseAssetListDto;
-import asset.ledger.assetledgerserver.asset.domain.entity.Asset;
 import asset.ledger.assetledgerserver.category.domain.dto.RequestUseCategoryDto;
 import asset.ledger.assetledgerserver.category.domain.dto.ResponseUseCategoryDto;
 import asset.ledger.assetledgerserver.category.domain.dto.ResponseUseCategoryListDto;
@@ -34,6 +31,9 @@ public class UseCategoryServiceImpl implements UseCategoryService {
 
     @Override
     public void createUseCategory(final String userId, final RequestUseCategoryDto requestUseCategoryDto) {
+        if (requestUseCategoryDto.getUseCategory().equals("입금 이체") || requestUseCategoryDto.getUseCategory().equals("출금 이체")) {
+            throw new IllegalArgumentException("해당 카테고리는 생성이 불가능 합니다. 이체 가계부 생성을 이용해주세요");
+        }
         UseCategory useCategory = requestUseCategoryDto.toEntity(userId);
 
         useCategoryRepository.save(useCategory);

@@ -9,6 +9,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ResponseLedgerDto {
+    private Long id;
     private String plusMinusType;
     private String editDate;
     private String editTime;
@@ -21,6 +22,7 @@ public class ResponseLedgerDto {
     public static ResponseLedgerDto fromEntity(Ledger ledger) {
         return ResponseLedgerDto
                 .builder()
+                .id(ledger.getId())
                 .plusMinusType(ledger.getPlusMinusType().getType())
                 .editDate(toEditDate(ledger.getEditDateTime()))
                 .editTime(toEditTime(ledger.getEditDateTime()))
