@@ -1,4 +1,4 @@
-package asset.ledger.assetledgerserver.scheduler.service;
+package asset.ledger.assetledgerserver.scheduler.application.service;
 
 public interface FCMPushSchedulerService {
     void createFCMPushScheduler(final String userId);

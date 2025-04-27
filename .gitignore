@@ -4,6 +4,9 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+.json
+asset-ledger-firebase-server-key.json
+./src/main/resource/**
 
 ### STS ###
 .apt_generated

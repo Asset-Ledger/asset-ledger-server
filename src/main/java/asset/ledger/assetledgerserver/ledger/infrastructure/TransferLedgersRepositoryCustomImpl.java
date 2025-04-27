@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class TransferLedgersRepositoryImpl implements TransferLedgersRepositoryCustom {
+public class TransferLedgersRepositoryCustomImpl implements TransferLedgersRepositoryCustom {
 
     private final JPQLQueryFactory jpqlQueryFactory;
 

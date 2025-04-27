@@ -1,4 +1,4 @@
-package asset.ledger.assetledgerserver.scheduler.job;
+package asset.ledger.assetledgerserver.scheduler.application.job;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;

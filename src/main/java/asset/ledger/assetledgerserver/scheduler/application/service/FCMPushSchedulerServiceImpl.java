@@ -1,6 +1,6 @@
-package asset.ledger.assetledgerserver.scheduler.service;
+package asset.ledger.assetledgerserver.scheduler.application.service;
 
-import asset.ledger.assetledgerserver.scheduler.config.FCMPushSchedulerConfig;
+import asset.ledger.assetledgerserver.config.scheduler.FCMPushSchedulerConfig;
 import lombok.RequiredArgsConstructor;
 import org.quartz.SchedulerException;
 import org.springframework.stereotype.Service;

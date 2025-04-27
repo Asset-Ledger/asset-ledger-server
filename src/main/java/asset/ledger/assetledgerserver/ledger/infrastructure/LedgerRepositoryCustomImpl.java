@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class LedgerRepositoryImpl implements LedgerRepositoryCustom {
+public class LedgerRepositoryCustomImpl implements LedgerRepositoryCustom {
 
     private final JPQLQueryFactory jpqlQueryFactory;
 

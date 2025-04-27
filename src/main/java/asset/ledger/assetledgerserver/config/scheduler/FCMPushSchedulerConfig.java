@@ -1,7 +1,7 @@
-package asset.ledger.assetledgerserver.scheduler.config;
+package asset.ledger.assetledgerserver.config.scheduler;
 
-import asset.ledger.assetledgerserver.scheduler.job.FCMPushSchedulerJob;
-import asset.ledger.assetledgerserver.scheduler.listener.FCMPushSchedulerJobListener;
+import asset.ledger.assetledgerserver.scheduler.application.job.FCMPushSchedulerJob;
+import asset.ledger.assetledgerserver.scheduler.application.listener.FCMPushSchedulerJobListener;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.matchers.GroupMatcher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
