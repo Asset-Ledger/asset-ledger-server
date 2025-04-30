@@ -4,6 +4,7 @@ import asset.ledger.assetledgerserver.scheduler.application.service.FCMPushSched
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,7 +19,7 @@ public class FCMPushSchedulerController {
             summary = "FCM push 스케줄러를 생성",
             description = "FCM push 스케줄러를 생성합니다."
     )
-    @GetMapping("")
+    @PostMapping("")
     public void createFCMPushScheduler(final String userId) {
         fcmPushSchedulerService.createFCMPushScheduler(userId);
 

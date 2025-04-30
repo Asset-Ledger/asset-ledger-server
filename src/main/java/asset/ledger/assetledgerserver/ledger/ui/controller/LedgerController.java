@@ -8,6 +8,7 @@ import asset.ledger.assetledgerserver.ledger.ui.dto.SearchLedgerDto;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/ledger")
 @RequiredArgsConstructor
@@ -68,13 +70,13 @@ public class LedgerController {
 
             return new ResponseEntity<>(responseLedgerListDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            System.out.println("알 수 없는 오류가 발생했습니다");
-            System.out.println(e);
-            System.out.println(e.getMessage());
+            log.error("알 수 없는 오류가 발생했습니다");
+            log.error(String.valueOf(e));
+            log.error(e.getMessage());
 
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -108,11 +110,11 @@ public class LedgerController {
 
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            System.out.println("알 수 없는 오류가 발생했습니다");
+            log.error("알 수 없는 오류가 발생했습니다");
 
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -144,11 +146,11 @@ public class LedgerController {
 
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            System.out.println("알 수 없는 오류가 발생했습니다");
+            log.error("알 수 없는 오류가 발생했습니다");
 
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -182,15 +184,15 @@ public class LedgerController {
 
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EntityNotFoundException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
 
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            System.out.println("알 수 없는 오류가 발생했습니다");
+            log.error("알 수 없는 오류가 발생했습니다");
 
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -213,15 +215,15 @@ public class LedgerController {
 
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EntityNotFoundException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
 
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            System.out.println("알 수 없는 오류가 발생했습니다");
+            log.error("알 수 없는 오류가 발생했습니다");
 
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
