@@ -32,7 +32,7 @@ public class FCMServiceImpl implements FCMService {
 
     public void requestFCMPush(String userId) throws Exception {
         String title = "가계부 작성 알림";
-        String body = "가계부를 작성할 시간입니다! 가계부를 작성해주세요!";
+        String body = "가계부를 작성할 시간입니다!\n앱에 접속해서 가계부를 작성해주세요!";
 
         String fcmDeviceToken = getFCMDeviceToken(userId);
         fcmDeviceToken = fcmDeviceToken.replace("\"", "");
