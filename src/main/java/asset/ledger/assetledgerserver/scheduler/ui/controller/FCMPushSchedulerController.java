@@ -1,7 +1,9 @@
 package asset.ledger.assetledgerserver.scheduler.ui.controller;
 
 import asset.ledger.assetledgerserver.scheduler.application.service.FCMPushSchedulerService;
-import asset.ledger.assetledgerserver.scheduler.domain.RequestFCMPushSchedulerDto;
+import asset.ledger.assetledgerserver.scheduler.domain.dto.RequestFCMPushSchedulerDto;
+import asset.ledger.assetledgerserver.scheduler.domain.dto.ResponseFCMPushSchedulerListDto;
+import asset.ledger.assetledgerserver.scheduler.domain.entity.FCMPushScheduler;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -33,9 +36,50 @@ public class FCMPushSchedulerController {
             @RequestBody RequestFCMPushSchedulerDto requestFCMPushSchedulerDto
     ) {
         try {
-            return fcmPushSchedulerService.createFCMPushScheduler(userId, requestFCMPushSchedulerDto);
+            fcmPushSchedulerService.createFCMPushScheduler(userId, requestFCMPushSchedulerDto);
+
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
             log.error("FCMPushSchedulerController createFCMPushScheduler error 발생 errorMessage={}", e.getMessage());
+        }
+
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Operation(
+            summary = "UserId로 FCM push 스케줄러 조회",
+            description = "UserId로 FCM push 스케줄러를 조회합니다."
+    )
+    @GetMapping("")
+    public ResponseEntity<ResponseFCMPushSchedulerListDto> getFCMPushSchedulers(
+            @RequestHeader("user-id") String userId
+    ) {
+        try {
+            ResponseFCMPushSchedulerListDto responseFCMPushSchedulerListDto = fcmPushSchedulerService.getFCMPushSchedulers(userId);
+
+            return new ResponseEntity<>(responseFCMPushSchedulerListDto, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("FCMPushSchedulerController getFCMPushSchedulers error 발생 errorMessage={}", e.getMessage());
+        }
+
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Operation(
+            summary = "UserId로 FCM push 스케줄러 조회",
+            description = "UserId로 FCM push 스케줄러를 조회합니다."
+    )
+    @PostMapping("/turnOnOff")
+    public ResponseEntity<Void> turnOnOffFCMPushScheduler(
+            @RequestHeader("user-id") String userId,
+            @RequestParam Long id
+    ) {
+        try {
+            fcmPushSchedulerService.turnOnFcmPushSchedulerById(id, userId);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("FCMPushSchedulerController turnOnOffFCMPushScheduler error 발생 errorMessage={}", e.getMessage());
         }
 
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
